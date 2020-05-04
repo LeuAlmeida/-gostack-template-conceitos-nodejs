@@ -1,4 +1,4 @@
-<h1 align="center">Léu Almeida | Personal Portfolio</h1>
+<h1 align="center">Léu Almeida | Node.js Concepts</h1>
 
 <blockquote align="center">
 :zap: Node.js concepts application 
