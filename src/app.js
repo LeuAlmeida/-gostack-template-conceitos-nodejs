@@ -89,14 +89,35 @@ app.delete("/repositories/:id", (request, response) => {
       .json({ error: "RepositoryIndex does not found." });
   }
 
-  repositories.splice(repositoryIndex, 1)
+  repositories.splice(repositoryIndex, 1);
 
   return response.status(204).send();
-
 });
 
 app.post("/repositories/:id/like", (request, response) => {
-  // TODO
+  const { id } = request.params;
+
+  const repositoryIndex = repositories.findIndex((repo) => repo.id === id);
+
+  if (repositoryIndex < 0) {
+    return response
+      .status(400)
+      .json({ error: "RepositoryIndex does not found." });
+  }
+
+  const { title, url, techs, likes } = repositories[repositoryIndex];
+
+  const repository = {
+    id,
+    title,
+    url,
+    techs,
+    likes: likes + 1,
+  };
+
+  repositories[repositoryIndex] = repository;
+
+  return response.json(repositories);
 });
 
 module.exports = app;
