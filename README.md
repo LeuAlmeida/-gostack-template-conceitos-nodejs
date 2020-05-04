@@ -46,7 +46,7 @@ $ yarn test
 
 MIT License.
 
-See [LICENSE](LICENSE.md) for details.
+See [LICENSE](LICENSE) for details.
 
 <hr/>
 
