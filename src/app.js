@@ -17,61 +17,38 @@ app.get("/repositories", (request, response) => {
 app.post("/repositories", (request, response) => {
   const { title, url, techs } = request.body;
 
-  // Techs array validator
-  if (!Array.isArray(techs)) {
-    return response.status(400).json({
-      error: "Techs must be an array",
-    });
-  }
+  const repository = {
+    id: uuid(),
+    title,
+    url,
+    techs,
+    likes: 0
+  };
 
-  // URL validator
-  const regexp = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
+  repositories.push(repository);
 
-  if (!regexp.test(url)) {
-    return response.status(400).json({ error: "Invalid URL" });
-  }
-
-  const project = { id: uuid(), title, url, techs, likes: 0 };
-
-  repositories.unshift(project);
-
-  return response.json(repositories);
+  return response.status(201).json(repository);
 });
 
 app.put("/repositories/:id", (request, response) => {
   const { id } = request.params;
   const { title, url, techs } = request.body;
 
-  // Techs array validator
-  if (!Array.isArray(techs)) {
-    return response.status(400).json({
-      error: "Techs must be an array",
-    });
-  }
-
-  // URL validator
-  const regexp = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
-
-  if (!regexp.test(url)) {
-    return response.status(400).json({ error: "Invalid URL" });
-  }
-
-  // Repository validator
   const repositoryIndex = repositories.findIndex((repo) => repo.id === id);
 
   if (repositoryIndex < 0) {
-    return response
-      .status(400)
-      .json({ error: "RepositoryIndex does not found." });
+    return response.status(400).json({ error: 'Repository does not found' });
   }
+
+  const { likes } = repositories.find((repo) => repo.id === id);
 
   const repository = {
     id,
-    title: title || repositories[repositoryIndex].title,
-    url: url || repositories[repositoryIndex].url,
-    techs: techs || repositories[repositoryIndex].techs,
-    likes: repositories[repositoryIndex].likes,
-  };
+    title,
+    url,
+    techs,
+    likes
+  }
 
   repositories[repositoryIndex] = repository;
 
@@ -84,9 +61,7 @@ app.delete("/repositories/:id", (request, response) => {
   const repositoryIndex = repositories.findIndex((repo) => repo.id === id);
 
   if (repositoryIndex < 0) {
-    return response
-      .status(400)
-      .json({ error: "RepositoryIndex does not found." });
+    return response.status(400).json({ error: 'Repository does not found' });
   }
 
   repositories.splice(repositoryIndex, 1);
@@ -100,24 +75,24 @@ app.post("/repositories/:id/like", (request, response) => {
   const repositoryIndex = repositories.findIndex((repo) => repo.id === id);
 
   if (repositoryIndex < 0) {
-    return response
-      .status(400)
-      .json({ error: "RepositoryIndex does not found." });
+    return response.status(400).json({ error: 'Repository does not found' });
   }
 
   const { title, url, techs, likes } = repositories[repositoryIndex];
+
+  const incrementedLikes = likes + 1;
 
   const repository = {
     id,
     title,
     url,
     techs,
-    likes: likes + 1,
-  };
+    likes: incrementedLikes
+  }
 
   repositories[repositoryIndex] = repository;
 
-  return response.json(repositories);
+  return response.json(repository);
 });
 
 module.exports = app;
