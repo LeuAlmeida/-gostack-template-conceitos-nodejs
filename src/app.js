@@ -42,8 +42,8 @@ app.put("/repositories/:id", (request, response) => {
   const { id } = request.params;
   const { title, url, techs } = request.body;
 
-   // Techs array validator
-   if (!Array.isArray(techs)) {
+  // Techs array validator
+  if (!Array.isArray(techs)) {
     return response.status(400).json({
       error: "Techs must be an array",
     });
@@ -79,7 +79,20 @@ app.put("/repositories/:id", (request, response) => {
 });
 
 app.delete("/repositories/:id", (request, response) => {
-  // TODO
+  const { id } = request.params;
+
+  const repositoryIndex = repositories.findIndex((repo) => repo.id === id);
+
+  if (repositoryIndex < 0) {
+    return response
+      .status(400)
+      .json({ error: "RepositoryIndex does not found." });
+  }
+
+  repositories.splice(repositoryIndex, 1)
+
+  return response.status(204).send();
+
 });
 
 app.post("/repositories/:id/like", (request, response) => {
